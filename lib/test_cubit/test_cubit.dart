@@ -29,10 +29,11 @@ class TestCubit extends Cubit<TestStates> {
   Future<void> fetchproduct() async {
     try {
       emit(TestStateLoading());
-      final response = await Dio().get('https://fakestoreapi.com/products/2');
-      final model = ProductModel.fromJson(response.data);
-      emit(TestStateSuccess(model:  model));
-    }on DioException catch (e) {
+      final response = await Dio().get('https://fakestoreapi.com/products');
+      final model = response.data as List<dynamic>;
+      print(model[0]['description']);
+      emit(TestStateSuccess(model: model));
+    } on DioException catch (e) {
       debugPrint(e.message.toString());
       emit(TestStateError());
     }

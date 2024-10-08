@@ -15,7 +15,7 @@ final class TestStateLoading extends TestStates {}
 final class TestStateError extends TestStates {}
 
 final class TestStateSuccess extends TestStates {
-  final ProductModel model;
+  final List<dynamic> model;
 
   TestStateSuccess({required this.model});
 }

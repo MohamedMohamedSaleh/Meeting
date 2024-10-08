@@ -8,49 +8,54 @@ class TestScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => TestCubit(),
-      child: Builder(builder: (context) {
-        final cubit = BlocProvider.of<TestCubit>(context);
-        cubit.fetchproduct();
-        return Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              title: const Text('Home'),
-            ),
-            body: BlocConsumer<TestCubit, TestStates>(
-              listener: (context, state) {
-                if (state is TestStateSuccess) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Fetch Success'),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-                }
-              },
-              builder: (context, state) {
-                if (state is TestStateLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is TestStateSuccess) {
-                  return Column(
-                    children: [
-                      Text(state.model.title),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Image.network(
-                        state.model.image,
-                        width: 200,
-                        height: 200,
-                      ),
-                    ],
-                  );
-                } else {
-                  return const SizedBox.shrink();
-                }
-              },
-            ));
-      }),
+      create: (context) => TestCubit()..fetchproduct(),
+      child: Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: const Text('Home'),
+          ),
+          body: BlocConsumer<TestCubit, TestStates>(
+            listener: (context, state) {
+              if (state is TestStateSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Fetch Success'),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+            },
+            builder: (context, state) {
+              if (state is TestStateLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is TestStateSuccess) {
+                return ListView.builder(
+                  itemCount: state.model.length,
+                  itemBuilder: (context, index) {
+                    return CustomItem(
+                      model: state.model[index],
+                    );
+                  },
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
+          )),
+    );
+  }
+}
+
+class CustomItem extends StatelessWidget {
+  const CustomItem({super.key, required this.model});
+  final dynamic model;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(children: [
+        Text(model['title']),
+        Image.network(model['image']),
+      ]),
     );
   }
 }
